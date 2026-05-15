@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: journalApp
+  data:
+    mongodb:
+      uri: ${MONGO_URI}
+    redis:
+      uri: ${REDIS_URI}
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVER}
+    properties:
+      sasl.jaas.config: ${KAFKA_JAAS}
+      sasl.mechanism: SCRAM-SHA-256
+      security.protocol: SASL_SSL
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+    consumer:
+      group-id: weekly-sentiment-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+    listener:
+      missing-topics-fatal: false
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+weather:
+  api:
+    key: ${WEATHER_API_KEY}
+
+server:
+  port: ${PORT:10000}
+  servlet:
+    context-path: /journal
+
+logging:
+  level:
+    com:
+      Asterisk:
+        journalApp: DEBUG
