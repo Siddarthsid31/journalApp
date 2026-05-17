@@ -1,9 +1,11 @@
 spring:
   application:
     name: journalApp
+  mongodb:
+    uri: ${MONGO_URI}
   data:
     mongodb:
-      uri: ${MONGO_URI}
+      database: journaldb
     redis:
       uri: ${REDIS_URI}
   kafka:
