@@ -4,6 +4,7 @@ package com.Asterisk.journalApp.controller;
 import com.Asterisk.journalApp.entity.User;
 import com.Asterisk.journalApp.repository.UserRepository;
 import com.Asterisk.journalApp.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import com.Asterisk.journalApp.service.WeatherService;
 
 @RestController
 @RequestMapping("/user")
+@Tag(name = "User APIs", description = "Read,Update & Delete User")
 public class UserController {
 
     @Autowired

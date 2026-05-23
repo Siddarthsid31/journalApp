@@ -4,6 +4,7 @@ import com.Asterisk.journalApp.entity.User;
 import com.Asterisk.journalApp.service.UserDetailsServiceImpl;
 import com.Asterisk.journalApp.service.UserService;
 import com.Asterisk.journalApp.utils.JwtUtil;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/public")
+@Tag(name = "Public APIs", description = "Health Check, Signup & Login - No Authentication Required")
 public class PublicController {
 
     @Autowired

@@ -4,6 +4,7 @@ import com.Asterisk.journalApp.entity.JournalEntry;
 import com.Asterisk.journalApp.entity.User;
 import com.Asterisk.journalApp.service.JournalEntryService;
 import com.Asterisk.journalApp.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/journal")
+@Tag(name = "Journal APIs", description = "Create, Read, Update & Delete Journal Entries")
 public class journalEntryController {
 
     @Autowired
