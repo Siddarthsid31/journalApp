@@ -1,9 +1,12 @@
 package com.Asterisk.journalApp.controller;
 
+import com.Asterisk.journalApp.dto.LoginDTO;
+import com.Asterisk.journalApp.dto.UserDTO;
 import com.Asterisk.journalApp.entity.User;
 import com.Asterisk.journalApp.service.UserDetailsServiceImpl;
 import com.Asterisk.journalApp.service.UserService;
 import com.Asterisk.journalApp.utils.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,27 +35,39 @@ public class PublicController {
     @Autowired
     private UserService userService;
 
+    @Operation(summary = "Check if the service is up and running")
     @GetMapping("/health-check")
     public String healthCheck(){
         log.info("Health os ok!");
         return "ok";
     }
 
+    @Operation(summary = "Register a new user")
     @PostMapping({"/signup"})
-    public void signup(@RequestBody User user){
-        userService.saveNewUser(user);
+    public void signup(@RequestBody UserDTO user){
+        User newUser = new User();
+        user.setUsername(user.getUsername());
+        user.setPassword(user.getPassword());
+        user.setEmail(user.getEmail());
+        user.setSentimentAnalysis(user.isSentimentAnalysis());
+        userService.saveNewUser(newUser);
     }
 
-    @PostMapping({"/login"})
-    public ResponseEntity<String> login(@RequestBody User user){
+    @Operation(summary = "Login and get JWT token")
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginDTO user) {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword()));
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            user.getUsername(), user.getPassword()
+                    )
+            );
             UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
             String jwt = jwtUtil.generateToken(userDetails.getUsername());
             return new ResponseEntity<>(jwt, HttpStatus.OK);
-        }catch (Exception e){
-           log.error("Exception occured while createAuthenticationToken", e);
-           return new ResponseEntity<>("Incorrect username and password", HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            log.error("Exception occurred while createAuthenticationToken", e);
+            return new ResponseEntity<>("Incorrect username and password", HttpStatus.BAD_REQUEST);
         }
     }
 }

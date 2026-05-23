@@ -1,9 +1,11 @@
 package com.Asterisk.journalApp.controller;
 
 
+import com.Asterisk.journalApp.dto.UserDTO;
 import com.Asterisk.journalApp.entity.User;
 import com.Asterisk.journalApp.repository.UserRepository;
 import com.Asterisk.journalApp.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,21 +33,22 @@ public class UserController {
 
     @Autowired
     private WeatherService weatherService;
-    
 
+
+    @Operation(summary = "Update logged in user details")
     @PutMapping
-    public ResponseEntity<?> updateUser(@RequestBody User user){
+    public ResponseEntity<?> updateUser(@RequestBody UserDTO user) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
         User userInDb = userService.findByUserName(userName);
         userInDb.setUsername(user.getUsername());
-        userInDb.setUsername(user.getUsername());
-        userInDb.setPassword(passwordEncoder.encode(user.getPassword())); // encode it!
+        userInDb.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.saveNewUser(userInDb);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 
+    @Operation(summary = "Delete logged in user account")
     @DeleteMapping
     public ResponseEntity<?> deleteUserById(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -53,6 +56,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @Operation(summary = "Get logged in user details with weather info")
     @GetMapping
     public ResponseEntity<String> greeting(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
