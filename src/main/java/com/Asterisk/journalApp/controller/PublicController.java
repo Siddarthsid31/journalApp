@@ -32,6 +32,7 @@ public class PublicController {
 
     @GetMapping("/health-check")
     public String healthCheck(){
+        log.info("Health os ok!");
         return "ok";
     }
 
