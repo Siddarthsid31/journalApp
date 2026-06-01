@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Signing in... — Journify</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      background: #050a18;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Sora', sans-serif;
+      color: #f0f4ff;
+    }
+    .card {
+      text-align: center;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 3rem 2.5rem;
+      max-width: 360px;
+      width: 90%;
+    }
+    .spinner {
+      width: 44px; height: 44px;
+      border: 3px solid rgba(79,142,247,0.2);
+      border-top-color: #4f8ef7;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1.5rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    h2 { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; }
+    p { font-size: 0.85rem; color: rgba(200,210,240,0.55); }
+    .error { color: #f87171; margin-top: 1rem; font-size: 0.85rem; display: none; }
+    .back-btn {
+      margin-top: 1.5rem;
+      display: none;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #f0f4ff;
+      padding: 0.5rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-family: 'Sora', sans-serif;
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="spinner"></div>
+  <h2 id="statusTitle">Signing you in...</h2>
+  <p id="statusText">Please wait while we verify your identity.</p>
+  <p class="error" id="errorMsg"></p>
+  <button class="back-btn" id="backBtn" onclick="window.location.href='index.html'">Go back</button>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+
+  if (!code) {
+    document.getElementById('statusTitle').textContent = 'No code found';
+    document.getElementById('errorMsg').textContent = 'OAuth code is missing from the URL.';
+    document.getElementById('errorMsg').style.display = 'block';
+    document.getElementById('backBtn').style.display = 'inline-block';
+  } else {
+    fetch(`http://localhost:8081/journal/public/auth/callback?code=${encodeURIComponent(code)}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Auth failed');
+        return res.text();
+      })
+      .then(jwt => {
+        localStorage.setItem('jwt', jwt.replace(/"/g, ''));
+        document.getElementById('statusTitle').textContent = 'Success!';
+        document.getElementById('statusText').textContent = 'Redirecting to your journal...';
+        setTimeout(() => window.location.href = 'dashboard.html', 800);
+      })
+      .catch(err => {
+        document.getElementById('statusTitle').textContent = 'Sign in failed';
+        document.getElementById('statusText').textContent = 'Something went wrong.';
+        document.getElementById('errorMsg').textContent = err.message;
+        document.getElementById('errorMsg').style.display = 'block';
+        document.getElementById('backBtn').style.display = 'inline-block';
+      });
+  }
+</script>
+</body>
+</html>

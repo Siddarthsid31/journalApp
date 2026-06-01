@@ -47,7 +47,7 @@ public class GoogleAuthService {
 
     private static final String TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token";
     private static final String USERINFO_ENDPOINT = "https://oauth2.googleapis.com/tokeninfo";
-    private static final String REDIRECT_URI = "http://localhost:8081/journal/public/auth/callback";
+    private static final String REDIRECT_URI = "http://localhost:8081/journal/callback.html";
 
     public String handleGoogleLogin(String code) {
         String idToken = exchangeCodeForIdToken(code);
