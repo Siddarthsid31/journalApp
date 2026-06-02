@@ -283,7 +283,7 @@
       btn.disabled = true;
       btn.textContent = 'Saving...';
 
-      const payload = { title, content, sentiment: selectedMood || 'NEUTRAL' };
+      const payload = { title, content, sentiment: selectedMood !== null ? selectedMood : 'NEUTRAL' };
 
       try {
         const method = editId ? 'PUT' : 'POST';
