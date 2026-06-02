@@ -33,8 +33,9 @@ public class SpringSecurity {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(request -> request
+                        .requestMatchers("/", "/index.html").permitAll()
                         .requestMatchers("/public/**").permitAll()
-                        .requestMatchers("/*.html", "/**.html", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/*.html", "/**/*.html", "/css/**", "/js/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user/**").permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",
