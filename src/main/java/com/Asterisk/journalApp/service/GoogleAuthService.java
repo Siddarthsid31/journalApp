@@ -24,10 +24,10 @@ import java.util.UUID;
 @Slf4j
 public class GoogleAuthService {
 
-    @Value("${spring.security.oauth2.client.registration.google.client-id}")
+    @Value("${GOOGLE_CLIENT_ID}")
     private String clientId;
 
-    @Value("${spring.security.oauth2.client.registration.google.client-secret}")
+    @Value("${GOOGLE_CLIENT_SECRET}")
     private String clientSecret;
 
     @Autowired
