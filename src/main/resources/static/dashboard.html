@@ -331,14 +331,16 @@
     }
 
     function editEntry(id) {
-      window.location.href = `create.html?id=${id}`;
+      const JOURNAL_PATH2 = window.location.hostname === 'localhost' ? '/journal/journal' : '/journal';
+        window.location.href = `create.html?id=${id}&path=${encodeURIComponent(JOURNAL_PATH2)}`;
     }
 
     async function deleteEntry(evt, id) {
       evt.stopPropagation();
       if (!confirm('Delete this entry?')) return;
       try {
-        await fetch(`${API}/journal/id/${id}`, {
+       const JOURNAL_PATH = window.location.hostname === 'localhost' ? '/journal/journal' : '/journal';
+        await fetch(`${API}${JOURNAL_PATH}/id/${id}`, {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${token}` }
         });
