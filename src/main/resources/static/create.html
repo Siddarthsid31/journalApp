@@ -215,87 +215,90 @@
 </div>
 
 <script>
-  const API = 'https://journalapp-2pia.onrender.com';
-  const token = localStorage.getItem('jwt');
-  if (!token) window.location.href = 'index.html';
+    const API = window.location.hostname === 'localhost'
+    ? 'http://localhost:8081'
+    : 'https://journalapp-2pia.onrender.com';
+    const token = localStorage.getItem('jwt');
+    if (!token) window.location.href = 'index.html';
 
-  let selectedMood = null;
-  const params = new URLSearchParams(window.location.search);
-  const editId = params.get('id');
+    let selectedMood = null;
+    const params = new URLSearchParams(window.location.search);
+    const editId = params.get('id');
 
-  document.getElementById('dateLine').textContent = new Date().toLocaleDateString('en-IN', {
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-  });
+    document.getElementById('dateLine').textContent = new Date().toLocaleDateString('en-IN', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    });
 
-  function autoResize(el) {
-    el.style.height = 'auto';
-    el.style.height = el.scrollHeight + 'px';
-  }
+    function autoResize(el) {
+      el.style.height = 'auto';
+      el.style.height = el.scrollHeight + 'px';
+    }
 
-  function updateWordCount() {
-    const text = document.getElementById('contentInput').value.trim();
-    const count = text ? text.split(/\s+/).length : 0;
-    document.getElementById('wordCount').textContent = `${count} word${count !== 1 ? 's' : ''}`;
-  }
+    function updateWordCount() {
+      const text = document.getElementById('contentInput').value.trim();
+      const count = text ? text.split(/\s+/).length : 0;
+      document.getElementById('wordCount').textContent = `${count} word${count !== 1 ? 's' : ''}`;
+    }
 
-  function selectMood(btn) {
-    document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    selectedMood = btn.dataset.mood;
-  }
+    function selectMood(btn) {
+      document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedMood = btn.dataset.mood;
+    }
 
-  function showToast(msg, isError = false) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = 'toast' + (isError ? ' error' : '');
-    t.style.display = 'block';
-    setTimeout(() => { t.style.display = 'none'; }, 3000);
-  }
+    function showToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast' + (isError ? ' error' : '');
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 3000);
+    }
 
-  async function saveEntry() {
-    const title = document.getElementById('titleInput').value.trim();
-    const content = document.getElementById('contentInput').value.trim();
-    if (!title) { showToast('Please add a title', true); return; }
-    if (!content) { showToast('Please write something', true); return; }
+    async function saveEntry() {
+      const title = document.getElementById('titleInput').value.trim();
+      const content = document.getElementById('contentInput').value.trim();
+      if (!title) { showToast('Please add a title', true); return; }
+      if (!content) { showToast('Please write something', true); return; }
 
-    const btn = document.getElementById('saveBtn');
-    btn.disabled = true;
-    btn.textContent = 'Saving...';
+      const btn = document.getElementById('saveBtn');
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
 
-    const payload = { title, content, sentiment: selectedMood || 'NEUTRAL' };
+      const payload = { title, content, sentiment: selectedMood || 'NEUTRAL' };
 
-    try {
-      const method = editId ? 'PUT' : 'POST';
-      const url = editId ? `${API}/journal/journal/id/${editId}` : `${API}/journal/journal`;
-      const res = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-      });
+      try {
+        const method = editId ? 'PUT' : 'POST';
+        const JOURNAL_PATH = window.location.hostname === 'localhost' ? '/journal/journal' : '/journal';
+        const url = editId ? `${API}${JOURNAL_PATH}/id/${editId}` : `${API}${JOURNAL_PATH}`;
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        });
 
-      if (res.ok) {
-        showToast('Entry saved successfully! ✓');
-        setTimeout(() => window.location.href = 'dashboard.html', 1200);
-      } else if (res.status === 401) {
-        window.location.href = 'index.html';
-      } else {
-        showToast('Failed to save. Try again.', true);
+        if (res.ok) {
+          showToast('Entry saved successfully! ✓');
+          setTimeout(() => window.location.href = 'dashboard.html', 1200);
+        } else if (res.status === 401) {
+          window.location.href = 'index.html';
+        } else {
+          showToast('Failed to save. Try again.', true);
+          btn.disabled = false;
+          btn.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Save Entry';
+        }
+      } catch(e) {
+        showToast('Server not reachable.', true);
         btn.disabled = false;
         btn.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Save Entry';
       }
-    } catch(e) {
-      showToast('Server not reachable.', true);
-      btn.disabled = false;
-      btn.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Save Entry';
     }
-  }
 
-  document.addEventListener('keydown', e => {
-    if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); saveEntry(); }
-  });
+    document.addEventListener('keydown', e => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); saveEntry(); }
+    });
 </script>
 </body>
 </html>

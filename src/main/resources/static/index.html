@@ -318,7 +318,9 @@
 
 <script>
   const GOOGLE_CLIENT_ID = '908557762518-32g9nqkhlrd112mssnrc8423fj597jor.apps.googleusercontent.com';
-  const REDIRECT_URI = 'http://localhost:8081/journal/callback.html';
+  const REDIRECT_URI = window.location.hostname === 'localhost'
+  ? 'http://localhost:8081/journal/callback.html'
+  : 'https://journalapp-2pia.onrender.com/callback.html';
   const AUTH_URL = `https://accounts.google.com/o/oauth2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=email%20profile`;
 
   document.getElementById('loginBtn').href = AUTH_URL;

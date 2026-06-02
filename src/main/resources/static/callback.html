@@ -68,7 +68,7 @@
     document.getElementById('errorMsg').style.display = 'block';
     document.getElementById('backBtn').style.display = 'inline-block';
   } else {
-    fetch(`https://journalapp-2pia.onrender.com/journal/public/auth/callback?code=${encodeURIComponent(code)}`)
+    fetch(`https://journalapp-2pia.onrender.com/public/auth/callback?code=${encodeURIComponent(code)}`)
       .then(res => {
         if (!res.ok) throw new Error('Auth failed');
         return res.text();
