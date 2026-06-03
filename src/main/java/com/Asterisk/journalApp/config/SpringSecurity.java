@@ -35,6 +35,7 @@ public class SpringSecurity {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/", "/index.html").permitAll()
                         .requestMatchers("/public/**").permitAll()
+                        .requestMatchers("/journal/public/**").permitAll()
                         .requestMatchers("/*.html", "/**/*.html", "/css/**", "/js/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user/**").permitAll()
                         .requestMatchers(
